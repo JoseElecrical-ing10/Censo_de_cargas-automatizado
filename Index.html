@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --green-50:#E3F3E6; --green-100:#CCE9D3; --green-500:#43A047;
+      --blue-50:#DFF0FF;  --blue-100:#CAE6FF;  --blue-500:#1E88E5;
+      --text:#0F172A; --muted:#475569; --border:#D7DFE8;
+      --white:#FFFFFF; --bg:#F7FAFC;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px;}
+    .header{display:flex;align-items:center;gap:16px;}
+    .title-group{flex:1 1 auto;min-width:0}
+    h1{font-size:32px;margin:0 0 8px;font-weight:800;letter-spacing:.2px;}
+    .accent-bar{height:6px;width:220px;border-radius:6px;background:linear-gradient(90deg,var(--green-500),var(--blue-500));box-shadow:0 2px 10px rgba(30,136,229,.15);}
+
+    fieldset{border:1px solid var(--border);border-radius:14px;padding:16px;margin:18px 0;background:linear-gradient(180deg, rgba(30,136,229,.04), rgba(67,160,71,.04));box-shadow:0 2px 14px rgba(0,0,0,.04);}
+    legend{padding:0 12px;font-weight:800;color:#0F172A;background:linear-gradient(90deg, rgba(30,136,229,.12), rgba(67,160,71,.12));border-radius:999px;line-height:30px;font-size:16px;}
+    label{display:block;font-size:12px;margin:8px 0 6px;color:var(--muted);font-weight:600;letter-spacing:.2px;}
+    input, select, textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#0F172A;outline:none;transition:border .15s, box-shadow .15s, background .15s;}
+    input:focus, select:focus, textarea:focus{border-color:#1E88E5;box-shadow:0 0 0 4px rgba(30,136,229,.18);background:#F9FCFF;}
+    textarea{resize:vertical; min-height:42px; line-height:1.25}
+    .row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    @media (min-width:1280px){.row{grid-template-columns:repeat(4,1fr)}}
+    @media (max-width:820px){.row{grid-template-columns:1fr}}
+
+    .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    table.loads{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:14px;background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.04);min-width:1680px;}
+    .loads thead th{background:linear-gradient(180deg, #CAE6FF, #DFF0FF);padding:10px 10px;text-align:left;border-bottom:1px solid var(--border);color:#0F172A;white-space:normal;line-height:1.15;font-weight:700;font-size:13px;}
+    .loads td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
+
+    /* NUEVO ORDEN – anchos por columna */
+    .loads th:nth-child(1),  .loads td:nth-child(1){  width:150px; } /* Ubicación */
+    .loads th:nth-child(2),  .loads td:nth-child(2){  width:120px; } /* Área */
+    .loads th:nth-child(3),  .loads td:nth-child(3){  width:120px; } /* Set point */
+    .loads th:nth-child(4),  .loads td:nth-child(4){  width:140px; } /* Controlador */
+    .loads th:nth-child(5),  .loads td:nth-child(5){  width:160px; } /* Carga */
+    .loads th:nth-child(6),  .loads td:nth-child(6){  width:110px; } /* Cantidad */
+    .loads th:nth-child(7),  .loads td:nth-child(7){  width:420px; } /* Descripción */
+    .loads th:nth-child(8),  .loads td:nth-child(8){  width:110px; } /* Demanda unid. */
+    .loads th:nth-child(9),  .loads td:nth-child(9){  width:150px; } /* Capacidad */
+    .loads th:nth-child(10), .loads td:nth-child(10){ width:120px; } /* Unidad */
+    .loads th:nth-child(11), .loads td:nth-child(11){ width:110px; } /* Horas */
+    .loads th:nth-child(12), .loads td:nth-child(12){ width:110px; } /* Días/mes */
+    .loads th:nth-child(13), .loads td:nth-child(13){ width:140px; } /* Concurrencia */
+    .loads th:nth-child(14), .loads td:nth-child(14){ width:180px; } /* Condición operativa */
+    .loads th:nth-child(15), .loads td:nth-child(15){ width:110px; text-align:center;} /* Acción */
+
+    /* Ajustes finos */
+    .loads th:nth-child(7){ font-size:14px; } /* Descripción más visible */
+    .loads th:nth-child(8),
+    .loads th:nth-child(11),
+    .loads th:nth-child(12){ font-size:12px; } /* Campos estrechos */
+
+    .loads td:nth-child(7) textarea { min-height:46px; }
+    .loads td:nth-child(8) input { max-width:100px; }     /* Demanda más estrecha */
+    .loads td:nth-child(4) select,
+    .loads td:nth-child(13) select,
+    .loads td:nth-child(14) select { max-width:180px; }
+
+    .loads tbody tr:nth-child(even){background:linear-gradient(180deg, #CCE9D3, #E3F3E6);}
+    button{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;color:#0F172A;cursor:pointer;transition:transform .04s, box-shadow .15s, background .15s, border .15s, color .15s;}
+    button:hover{box-shadow:0 2px 10px rgba(0,0,0,.07)}
+    button:active{transform:translateY(1px)}
+    button[disabled]{opacity:.6;cursor:not-allowed}
+    .primary{color:#fff;border-color:transparent;background:linear-gradient(90deg,#43A047,#1E88E5);box-shadow:0 4px 16px rgba(67,160,71,.20);}
+    .linklike{border-color:#1E88E5;color:#1E88E5;background:rgba(30,136,229,.06);}
+    .toolbar{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+    .soft{background:rgba(30,136,229,.10);border-color:rgba(30,136,229,.25);color:#0F3D63;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title-group">
+        <h1>Censo de Cargas</h1>
+        <div class="accent-bar"></div>
+      </div>
+    </div>
+
+    <!-- DATALISTS -->
+    <datalist id="opt-tipo-edificio">
+      <option value="Residencial"></option><option value="PH"></option>
+      <option value="Comercial"></option><option value="Industrial"></option><option value="Mixto"></option>
+    </datalist>
+    <datalist id="opt-ubicacion">
+      <option value="Lobby"></option><option value="Estacionamiento"></option><option value="Garita"></option>
+      <option value="Depósito"></option><option value="Administración"></option><option value="Cuarto de máquinas"></option>
+    </datalist>
+    <datalist id="opt-carga">
+      <option value="Iluminación"></option><option value="Motor"></option>
+      <option value="Aire acondicionado"></option><option value="Refrigeración"></option>
+    </datalist>
+    <datalist id="opt-unidad-capacidad">
+      <option value="BTU"></option><option value="TON"></option>
+    </datalist>
+
+    <fieldset>
+      <legend>Datos del Edificio</legend>
+      <div class="row">
+        <div>
+          <label>Edificio</label>
+          <input id="edificio" placeholder="Nombre o código del edificio" required>
+        </div>
+        <div>
+          <label>Tipo de edificio</label>
+          <input id="tipo" list="opt-tipo-edificio" placeholder="Elige o escribe">
+        </div>
+        <div>
+          <label>Número de pisos</label>
+          <input id="pisos" type="number" min="0" step="1" placeholder="Ej. 5">
+        </div>
+      </div>
+      <div class="hint">Estos datos se repetirán automáticamente en todas las cargas.</div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cargas</legend>
+      <div class="table-scroll">
+        <table class="loads" id="loadsTable">
+          <thead>
+            <tr>
+              <th>Ubicación</th>
+              <th>Área (m²)</th>
+              <th>Set point (°C)</th>
+              <th>Controlador</th>
+              <th>Carga</th>
+              <th>Cantidad</th>
+              <th>Descripción (de la carga)</th>
+              <th>Demanda por unidad (kW)</th>
+              <th>Capacidad</th>
+              <th>Unidad</th>
+              <th>Horas uso</th>
+              <th>Días/mes</th>
+              <th>Concurrencia</th>
+              <th>Condición operativa (si aplica)</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="loadsBody"></tbody>
+        </table>
+      </div>
+      <div class="toolbar">
+        <button type="button" class="soft" onclick="addRow()">+ Agregar carga</button>
+      </div>
+    </fieldset>
+
+    <div class="toolbar">
+      <button type="button" class="linklike" onclick="clearAll()">Limpiar</button>
+      <button id="btnEnviar" class="primary" type="button" onclick="submitAll()">Enviar</button>
+    </div>
+
+    <p id="msg" class="hint"></p>
+  </div>
+
+  <script>
+    function addRow(values = {}) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input list="opt-ubicacion" placeholder="Elige o escribe" value="${values.ubicacion || ''}"></td>
+        <td><input type="number" step="any" placeholder="m²" value="${values.areaM2 || ''}"></td>
+        <td><input type="number" step="any" placeholder="°C" value="${values.setPoint || ''}"></td>
+        <td>
+          <select>
+            <option value="" ${!values.controlador ? 'selected' : ''}>Selecciona...</option>
+            <option value="Sí" ${values.controlador === 'Sí' ? 'selected' : ''}>Sí</option>
+            <option value="No" ${values.controlador === 'No' ? 'selected' : ''}>No</option>
+          </select>
+        </td>
+        <td><input list="opt-carga" placeholder="Elige o escribe" value="${values.carga || ''}"></td>
+        <td><input type="number" min="0" step="1" placeholder="Cantidad" value="${values.cantidad || ''}"></td>
+        <td><textarea placeholder="Describe la carga (marca, modelo, área, etc.)">${values.descripcion || ''}</textarea></td>
+        <td><input type="number" step="any" placeholder="kW" value="${values.demanda || ''}"></td>
+        <td><input placeholder="Capacidad (si aplica)" value="${values.capacidad || ''}"></td>
+        <td><input list="opt-unidad-capacidad" placeholder="Elige o escribe" value="${values.unidadCapacidad || ''}"></td>
+        <td><input type="number" step="any" placeholder="h/día" value="${values.horasUso || ''}"></td>
+        <td><input type="number" step="any" placeholder="días/mes" value="${values.diasMes || ''}"></td>
+        <td>
+          <select>
+            <option value="" ${!values.concurrencia ? 'selected' : ''}>Selecciona...</option>
+            <option value="Concurrido" ${values.concurrencia === 'Concurrido' ? 'selected' : ''}>Concurrido</option>
+            <option value="No concurrido" ${values.concurrencia === 'No concurrido' ? 'selected' : ''}>No concurrido</option>
+          </select>
+        </td>
+        <td>
+          <select>
+            <option value="" ${!values.condicionOperativa ? 'selected' : ''}>Selecciona...</option>
+            <option value="Favorable" ${values.condicionOperativa === 'Favorable' ? 'selected' : ''}>Favorable</option>
+            <option value="No favorable" ${values.condicionOperativa === 'No favorable' ? 'selected' : ''}>No favorable</option>
+          </select>
+        </td>
+        <td><button type="button" onclick="this.closest('tr').remove()">Eliminar</button></td>
+      `;
+      document.getElementById('loadsBody').appendChild(tr);
+    }
+
+    function getLoads() {
+      const rows = [];
+      document.querySelectorAll('#loadsBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input, select, textarea');
+        const obj = {
+          // Índices alineados con el nuevo orden del DOM
+          ubicacion:           inputs[0].value.trim(),
+          areaM2:              inputs[1].value.trim(),
+          setPoint:            inputs[2].value.trim(),
+          controlador:         inputs[3].value.trim(),
+          carga:               inputs[4].value.trim(),
+          cantidad:            inputs[5].value.trim(),
+          descripcion:         inputs[6].value.trim(),
+          demanda:             inputs[7].value.trim(),
+          capacidad:           inputs[8].value.trim(),
+          unidadCapacidad:     inputs[9].value.trim(),
+          horasUso:            inputs[10].value.trim(),
+          diasMes:             inputs[11].value.trim(),
+          concurrencia:        inputs[12].value.trim(),
+          condicionOperativa:  inputs[13].value.trim()
+        };
+        if (Object.values(obj).some(v => v !== '')) rows.push(obj);
+      });
+      return rows;
+    }
+
+    // Limpieza manual con confirmación
+    function clearAll(){
+      if(!window.confirm("¿Seguro que deseas limpiar todo el formulario? Esta acción no se puede deshacer.")) return;
+      document.getElementById('edificio').value='';
+      document.getElementById('tipo').value='';
+      document.getElementById('pisos').value='';
+      document.getElementById('loadsBody').innerHTML='';
+      addRow();
+      document.getElementById('msg').textContent='';
+    }
+
+    let isSubmitting=false;
+    function submitAll(){
+      if(isSubmitting) return;
+      const btn=document.getElementById('btnEnviar');
+
+      const edificio=document.getElementById('edificio').value.trim();
+      if(!edificio){ alert('Debes indicar el nombre o código del edificio.'); return; }
+
+      const building={edificio, tipo:document.getElementById('tipo').value.trim(), pisos:document.getElementById('pisos').value.trim()};
+      const loads=getLoads();
+      if(!loads.length){ alert('Agrega al menos una carga.'); return; }
+
+      if(!window.confirm(`¿Confirmas enviar el censo para "${building.edificio}" con ${loads.length} ${loads.length===1?'carga':'cargas'}?`)){
+        document.getElementById('msg').textContent='Envío cancelado.'; return;
+      }
+
+      isSubmitting=true; btn.disabled=true; document.getElementById('msg').textContent='Enviando...';
+
+      google.script.run
+        .withSuccessHandler(res=>{
+          const a=document.createElement('a');
+          a.href=res.url; a.target='_blank'; a.textContent=`Abrir archivo: ${res.fileName}`;
+          const msg=document.getElementById('msg');
+          msg.innerHTML = `✔ Se guardaron ${res.count} filas. `;
+          msg.appendChild(a);
+
+          // Limpieza automática post-envío
+          document.getElementById('edificio').value='';
+          document.getElementById('tipo').value='';
+          document.getElementById('pisos').value='';
+          document.getElementById('loadsBody').innerHTML='';
+          addRow();
+        })
+        .withFailureHandler(err=>{
+          document.getElementById('msg').textContent='✖ Error: '+err.message;
+        })
+        .processForm({ edificio: building.edificio, tipo: building.tipo, pisos: building.pisos, cargas: loads });
+
+      setTimeout(()=>{ isSubmitting=false; btn.disabled=false; },1500);
+    }
+
+    addRow();  // Fila inicial
+  </script>
+</body>
+</html>
